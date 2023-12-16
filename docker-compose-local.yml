@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  pharmacy-recommendation-redis:
+    container_name: pharmacy-recommendation-redis
+    build:
+      dockerfile: DockerFile
+      context: ./redis
+    image: zcx5674/pharmacy-recommendation-redis #dockerhub id?
+    ports:
+      - "6379:6379" #redis default port, port forwarding (why need forwarding?)
+  pharmacy-recommendation-database:
+    container_name: pharmacy-recommendation-database
+    build:
+      dockerfile: DockerFile
+      context: ./database
+    image: zcx5674/pharmacy-recommendation-redis
+    environment:
+      - MARIADB_DATABASE = pharmacy-recommendation #database name
+      - MARIADB_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./database/config:/etc/mysql/conf.d #later reference host when initializing
+    ports:
+      - "3306:3306"
+
+
+#when running dockercompose, env read
